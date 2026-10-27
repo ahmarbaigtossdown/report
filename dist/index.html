@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TD Composer — TDX Backlog</title>
+  <style>
+    :root { --blue:#356fe8; --ink:#172033; --muted:#667085; --line:#e7eaf0; --soft:#f6f8fc; --green:#24a982; --orange:#f09b42; --red:#e25454; --shadow:0 2px 10px rgba(22,34,61,.07); }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--ink); background:#f7f8fc; font:14px/1.45 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    button, input, select { font:inherit; }
+    .appbar { height:54px; display:flex; align-items:center; gap:18px; padding:0 22px; background:#fff; border-bottom:1px solid var(--line); position:sticky; top:0; z-index:3; }
+    .home { color:#667085; font-size:18px; }
+    .crumb { font-weight:700; }
+    .crumb small { color:#99a0ae; font-weight:500; margin-left:14px; }
+    .bar-spacer { flex:1; }
+    .avatar { width:24px; height:24px; border-radius:50%; color:white; background:#587b9d; display:grid; place-items:center; font-size:11px; }
+    .bar-btn { border:0; background:transparent; color:#667085; cursor:pointer; padding:7px 9px; border-radius:7px; }
+    .bar-btn:hover { background:#f2f4f8; }
+    .wrap { max-width:1320px; margin:auto; padding:22px 16px 54px; }
+    .hero { display:flex; align-items:center; justify-content:space-between; background:#fff; border:1px solid var(--line); border-radius:0 0 9px 9px; padding:18px 24px; box-shadow:var(--shadow); }
+    .brand { display:flex; gap:12px; align-items:center; }
+    .logo { width:34px; height:34px; border-radius:9px; background:var(--blue); color:white; display:grid; place-items:center; font-weight:800; }
+    h1 { margin:0; font-size:18px; letter-spacing:-.2px; }
+    .sub { color:var(--muted); font-size:12px; margin-top:2px; }
+    .pills { display:flex; gap:10px; }
+    .pill { border-radius:999px; padding:5px 10px; font-size:12px; font-weight:700; }
+    .pill.done { background:#e5faf3; color:#15936f; } .pill.urgent { background:#fff0ef; color:#e05252; }
+    .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:18px; }
+    .stat { background:#fff; border:1px solid var(--line); border-radius:9px; padding:17px 18px; box-shadow:var(--shadow); min-height:108px; }
+    .stat-label { color:#727d8d; font-size:11px; font-weight:800; letter-spacing:.07em; }
+    .stat-num { font-size:27px; font-weight:800; margin:8px 0 2px; letter-spacing:-1px; }
+    .stat-note { color:#858e9e; font-size:12px; }
+    .chart-grid { display:grid; grid-template-columns:1.15fr 1fr 1fr; gap:14px; margin-top:14px; }
+    .card { background:#fff; border:1px solid var(--line); border-radius:9px; box-shadow:var(--shadow); padding:18px; }
+    .card h2 { margin:0 0 14px; font-size:14px; }
+    .card-meta { color:#8690a1; font-size:12px; float:right; font-weight:500; }
+    .bars { display:flex; align-items:end; gap:14px; height:118px; border-bottom:1px solid #e9ecf2; padding:0 8px 8px; }
+    .bar-col { flex:1; display:flex; flex-direction:column; align-items:center; gap:5px; height:100%; justify-content:end; }
+    .bar { width:26px; border-radius:5px 5px 0 0; background:linear-gradient(#6e95f1,#356fe8); min-height:8px; }
+    .bar-col span { color:#8b94a2; font-size:10px; }
+    .priority-row { display:flex; align-items:center; gap:10px; margin:11px 0; font-size:12px; }
+    .priority-row strong { width:56px; } .track { height:8px; flex:1; background:#eef1f6; border-radius:999px; overflow:hidden; } .fill { height:100%; border-radius:999px; }
+    .client-list { display:grid; gap:8px; } .client { display:flex; gap:10px; align-items:center; font-size:12px; } .client-name { flex:1; } .client b { font-size:12px; }
+    .section-title { display:flex; align-items:center; gap:8px; font-size:16px; margin:28px 0 12px; padding-bottom:9px; border-bottom:1px solid #dfe3ea; }
+    .section-title .accent { font-size:17px; }
+    .conversion-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:12px; }
+    .conversion { background:#fff; border:1px solid var(--line); box-shadow:var(--shadow); border-radius:9px; padding:14px 15px; min-height:76px; display:grid; grid-template-columns:36px 1fr; column-gap:10px; align-items:center; }
+    .conversion.active { border-color:#eda04d; } .initial { width:34px; height:34px; display:grid; place-items:center; border-radius:9px; background:#e8fbf4; color:#23a983; font-weight:800; grid-row:span 2; } .active .initial { background:#fff6e9; color:#e98e31; }
+    .conversion strong { font-size:12px; } .conversion small { color:#26a682; font-size:11px; } .active small { color:#dc8b34; }
+    .project-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    .project-card { padding:0; overflow:hidden; } .project-head { padding:15px 18px; display:flex; align-items:center; gap:9px; font-weight:700; border-bottom:1px solid var(--line); } .project-icon { color:#4d75e5; background:#edf2ff; border-radius:6px; padding:4px 6px; }
+    .bullet { padding:13px 18px; border-bottom:1px solid var(--line); color:#485568; font-size:12px; } .bullet:last-child { border-bottom:0; } .bullet:before { content:""; width:6px; height:6px; display:inline-block; vertical-align:middle; background:#4774e8; border-radius:50%; margin-right:10px; } .bullet b { color:#26364d; }
+    .impact { margin-top:14px; background:linear-gradient(135deg,#fff,#f5f8ff); border:1px solid #dfe6f8; border-radius:9px; padding:19px 21px; box-shadow:var(--shadow); }
+    .impact h2 { margin:0 0 9px; font-size:15px; } .impact h2 span { font-size:21px; margin-right:7px; } .impact p { margin:0; color:#516074; font-size:13px; }
+    .learning { margin-top:14px; background:#fff; border:1px solid var(--line); border-radius:9px; box-shadow:var(--shadow); padding:19px 21px; }
+    .learning-head { display:flex; align-items:center; gap:9px; margin-bottom:10px; } .learning-head .icon { color:#8e63d6; background:#f3edff; padding:5px 7px; border-radius:6px; } .learning h2 { margin:0; font-size:15px; } .learning p { margin:0; color:#516074; font-size:13px; }
+    .learning-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:14px; } .learning-item { padding:12px; background:#f8f9fd; border:1px solid #eceef4; border-radius:8px; color:#4d5d72; font-size:12px; } .learning-item b { display:block; color:#24334a; margin-bottom:4px; }
+    .toolbar { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin:23px 0 10px; } .search { min-width:270px; flex:1; padding:10px 12px; border:1px solid #dce1ea; border-radius:7px; outline:none; background:white; } .search:focus, select:focus { border-color:#6c8ff0; box-shadow:0 0 0 3px #edf2ff; } select { border:1px solid #dce1ea; border-radius:7px; padding:10px 32px 10px 11px; background:#fff; color:#455267; }
+    .table-card { padding:0; overflow:auto; } table { border-collapse:collapse; width:100%; min-width:920px; font-size:12px; } th { text-align:left; color:#7c8696; font-size:10px; letter-spacing:.06em; padding:13px 15px; background:#fafbfc; border-bottom:1px solid var(--line); white-space:nowrap; } td { padding:12px 15px; border-bottom:1px solid #edf0f4; color:#485568; } tbody tr:hover { background:#fafcff; } td:first-child { font-weight:800; color:#476fdb; } .status, .priority { font-weight:700; font-size:11px; } .status.closed { color:#1ca47d; } .status.todo { color:#e38d32; } .priority.urgent { color:#df5555; } .priority.high { color:#df8e36; } .muted { color:#a1a8b3; } .table-foot { padding:12px 15px; color:#7c8696; font-size:12px; }
+    @media (max-width: 980px) { .stats { grid-template-columns:repeat(2,1fr); } .chart-grid { grid-template-columns:1fr 1fr; } .chart-grid .card:first-child { grid-column:1/-1; } .conversion-grid { grid-template-columns:repeat(3,1fr); } }
+    @media (max-width: 680px) { .appbar { padding:0 12px; gap:10px; } .crumb small, .bar-btn:nth-last-child(-n+2) { display:none; } .wrap { padding:12px 10px 40px; } .hero { align-items:flex-start; gap:12px; padding:15px; } .pills { flex-direction:column; gap:5px; } .stats, .chart-grid, .project-grid { grid-template-columns:1fr; } .chart-grid .card:first-child { grid-column:auto; } .conversion-grid { grid-template-columns:repeat(2,1fr); } .learning-grid { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+  <header class="appbar"><div class="home">⌂</div><div class="crumb">TDX Backlog <small>Artifact by you</small></div><div class="bar-spacer"></div><div class="avatar">T</div><button class="bar-btn" aria-label="Comments">◐</button><button class="bar-btn">✦ Chat</button><button class="bar-btn">◎ Share</button></header>
+  <main class="wrap">
+    <section class="hero"><div class="brand"><div class="logo">TD</div><div><h1>TD Composer — TDX Backlog</h1><div class="sub">Tossdown Inc &nbsp;·&nbsp; September–October 2026 Report</div></div></div><div class="pills"><span class="pill done">97.7% Done</span><span class="pill urgent">24 Urgent</span></div></section>
+    <section class="stats">
+      <div class="stat"><div class="stat-label">TOTAL TASKS</div><div class="stat-num">132</div><div class="stat-note">Sep 1 – Oct 27, 2026</div></div>
+      <div class="stat"><div class="stat-label">CLOSED</div><div class="stat-num">129</div><div class="stat-note">97.7% completion rate</div></div>
+      <div class="stat"><div class="stat-label">OPEN / TO DO</div><div class="stat-num">3</div><div class="stat-note">Pending resolution</div></div>
+      <div class="stat"><div class="stat-label">URGENT PRIORITY</div><div class="stat-num">24</div><div class="stat-note">Flagged high-impact</div></div>
+    </section>
+    <section class="chart-grid">
+      <div class="card"><h2>Tasks by Priority <span class="card-meta">132 total</span></h2><div class="priority-row"><strong>Urgent</strong><div class="track"><div class="fill" style="width:18%;background:#e25555"></div></div><span>24</span></div><div class="priority-row"><strong>High</strong><div class="track"><div class="fill" style="width:45%;background:#f0a14b"></div></div><span>60</span></div><div class="priority-row"><strong>Normal</strong><div class="track"><div class="fill" style="width:17%;background:#5a83eb"></div></div><span>23</span></div><div class="priority-row"><strong>None</strong><div class="track"><div class="fill" style="width:18%;background:#b9c0ca"></div></div><span>24</span></div></div>
+      <div class="card"><h2>Tasks by List <span class="card-meta">2 boards</span></h2><div class="bars"><div class="bar-col"><div class="bar" style="height:72%"></div><span>Support</span></div><div class="bar-col"><div class="bar" style="height:100%"></div><span>TDX</span></div></div></div>
+      <div class="card"><h2>Tasks Created — Monthly View <span class="card-meta">Sep–Oct 2026</span></h2><div class="bars"><div class="bar-col"><div class="bar" style="height:100%"></div><span>Sep · 69</span></div><div class="bar-col"><div class="bar" style="height:91%"></div><span>Oct · 63</span></div></div></div>
+    </section>
+    <section class="card" style="margin-top:14px"><h2>Top Clients by Tasks <span class="card-meta">Sep–Oct 2026</span></h2><div class="client-list" id="clientList"></div></section>
+    <h2 class="section-title"><span class="accent">↻</span> Composer Conversions</h2>
+    <section class="conversion-grid"><div class="conversion"><div class="initial">BG</div><strong>Bagh</strong><small>✓ Converted</small></div><div class="conversion"><div class="initial">KM</div><strong>Kim Mun</strong><small>✓ Converted</small></div><div class="conversion"><div class="initial">SC</div><strong>Sichuan</strong><small>✓ Converted</small></div><div class="conversion"><div class="initial">KB</div><strong>Khan Baba</strong><small>✓ Converted</small></div><div class="conversion"><div class="initial">GJ</div><strong>GulabJee</strong><small>✓ Converted</small></div><div class="conversion active"><div class="initial">BB</div><strong>Baba Bakers</strong><small>⌛ In Progress</small></div><div class="conversion"><div class="initial">FI</div><strong>Farah Impex</strong><small>✓ Converted</small></div><div class="conversion"><div class="initial">TL</div><strong>The Lahori</strong><small>✓ Converted</small></div><div class="conversion"><div class="initial">SB</div><strong>Spice Bazaar</strong><small>✓ Converted</small></div><div class="conversion"><div class="initial">RCH</div><strong>Rumaisa Coffee House</strong><small>✓ Converted</small></div><div class="conversion"><div class="initial">RH</div><strong>Redhen</strong><small>✓ Converted</small></div><div class="conversion"><div class="initial">GB</div><strong>Green Box</strong><small>✓ Converted</small></div><div class="conversion"><div class="initial">ETH</div><strong>English Tea House</strong><small>✓ Converted</small></div><div class="conversion"><div class="initial">BB</div><strong>Brim Burgers</strong><small>✓ Converted</small></div><div class="conversion"><div class="initial">BU</div><strong>Bamboo Union</strong><small>✓ Converted</small></div><div class="conversion"><div class="initial">YCTR</div><strong>Yum Chinese and Thai Restaurant</strong><small>✓ Converted</small></div></section>
+    <h2 class="section-title"><span class="accent">⚡</span> Project Nova Frontend</h2>
+    <section class="project-grid">
+      <article class="card project-card"><div class="project-head"><span class="project-icon">✧</span> Data Layer &amp; Meta Pixel Tracking</div><div class="bullet"><b>Data Layer Events:</b> Implemented <code>dataLayer.push()</code> for product views, add-to-cart, and checkout initiation.</div><div class="bullet"><b>Meta Pixel Integration:</b> Integrated <code>ViewContent</code> and <code>AddToCart</code> events for product interaction and cart activity tracking.</div><div class="bullet"><b>Event Accuracy:</b> Implemented product ID, quantity, item price, and total value tracking for precise event data.</div></article>
+      <article class="card project-card"><div class="project-head"><span class="project-icon">▣</span> Delivery Address &amp; Checkout</div><div class="bullet"><b>Address Selection &amp; Persistence Fix:</b> Fixed an issue where checkout displayed the first saved address instead of the user's selected address.</div><div class="bullet"><b>Address Search Functionality:</b> Added an expandable search bar for location, city, area, and address details.</div><div class="bullet"><b>Delete Saved Address Feature:</b> Added a delete option with a confirmation popup to prevent accidental deletion.</div><div class="bullet"><b>Popup Layout &amp; UX:</b> Improved search animations, hover effects, scrollable address lists, and the always-visible “Add New Address” option.</div></article>
+    </section>
+    <section class="impact"><h2><span>🎯</span> Overall Impact on Nova</h2><p>Enhanced marketing event tracking accuracy · Resolved checkout address selection and persistence issues · Added address search, delete-with-confirmation, and popup layout fixes · Improved the Nova delivery flow with smoother interactions and a clearer customer experience.</p></section>
+    <section class="learning"><div class="learning-head"><span class="icon">✦</span><h2>Al-Khan Gamification</h2></div><p>Built Al-Khan Gamification with AI-assisted development, delivering a pixel-perfect UI and implementing the core functionality end to end. This work also helped me learn Git and Bitbucket workflows, create a new branch, and push code for review. That learning is now helping me build the next gamification system for Cola-One and Al-Khan while working closely with the backend team.</p><div class="learning-grid"><div class="learning-item"><b>Pixel-perfect UI</b>Translated the product direction into a close, polished interface.</div><div class="learning-item"><b>AI-assisted delivery</b>Used AI thoughtfully to speed up implementation and iteration.</div><div class="learning-item"><b>Stronger collaboration</b>Applied Git, Bitbucket, branching, and backend-team workflows on the next system.</div></div></section>
+    <section class="toolbar"><input class="search" id="search" placeholder="⌕  Search tasks..." aria-label="Search tasks" /><select id="month" aria-label="Filter by month"><option>All Months</option><option>September 2026</option><option>October 2026</option></select><select id="status" aria-label="Filter by status"><option>All Statuses</option><option>Closed</option><option>To Do</option></select><select id="priority" aria-label="Filter by priority"><option>All Priorities</option><option>Urgent</option><option>High</option><option>Normal</option><option>No Priority</option></select><select id="list" aria-label="Filter by list"><option>All Lists</option><option>Support</option><option>TDX</option></select></section>
+    <div class="table-card card"><table><thead><tr><th>TASK ID</th><th>TASK NAME</th><th>CLIENT</th><th>STATUS</th><th>PRIORITY</th><th>LIST</th><th>CREATED</th><th>DUE</th><th>COMMENTS</th></tr></thead><tbody id="taskRows"></tbody></table><div class="table-foot" id="count">0 listed / 132 total tasks</div></div>
+  </main>
+  <script src="september-tasks.js"></script>
+  <script>
+    const octoberTasks = [
+      ['REQUEST-40044','Mrakovic: Add recipe tab and page on the website','Mrakovic','Closed','High','Support','2026-10-01','2026-10-16','6'],
+      ['REQUEST-40083','Chashni: Discount Sheet Update','Chashni','Closed','No Priority','Support','2026-10-02','2026-10-02','1'],
+      ['REQUEST-40084','Spice Bazaar: Hi Tea Menu Update','Spice Bazaar','Closed','No Priority','Support','2026-10-02','2026-10-02','2'],
+      ['REQUEST-40120','The Green Box - Website Revamp','The Green Box','Closed','No Priority','Support','2026-10-05','2026-10-05','1'],
+      ['REQUEST-40143','Kulfiwala: Need to update UI','Kulfiwala','Closed','No Priority','Support','2026-10-06','2026-10-07','4'],
+      ['TDX-6932','Indian Deli & Bites Composer Conversion','Indian Deli & Bites','Closed','Normal','TDX','2026-10-01','2026-10-14','2'],
+      ['TDX-6933','Sichuan Composer Conversion','Sichuan','Closed','Normal','TDX','2026-10-01','2026-10-14','2'],
+      ['TDX-6934','Bagh Composer Conversion','Bagh','Closed','Normal','TDX','2026-10-01','2026-10-14','2'],
+      ['TDX-6935','TAZA Composer Conversion','TAZA','Closed','Normal','TDX','2026-10-01','2026-10-14','2'],
+      ['TDX-6940','PK Payment Gateway Integration','PK Client','Closed','High','TDX','2026-10-07','2026-10-14','2'],
+      ['TDX-6941','PK Analytics Setup','PK Client','Closed','Urgent','TDX','2026-10-08','2026-10-14','3'],
+      ['TDX-6946','Composer v2.1 Feature Deployment','Platform','Closed','Urgent','TDX','2026-10-13','2026-10-20','9'],
+      ['TDX-6948','Composer Performance Optimization','Platform','Closed','High','TDX','2026-10-15','2026-10-22','4'],
+      ['TDX-6951','Order Tracking Widget','Platform','Closed','High','TDX','2026-10-21','2026-10-27','4'],
+      ['TDX-6952','Multi-location Dashboard','Platform','To Do','High','TDX','2026-10-22','2026-10-28','5'],
+      ['TDX-6953','GulabJee: Composer Conversion','GulabJee','Closed','High','TDX','2026-10-16','2026-10-16','0'],
+      ['TDX-6954','Al-Khan Gamification — UI polish','Al-Khan','To Do','Urgent','TDX','2026-10-24','2026-10-29','3'],
+      ['TDX-6955','Cola-One Gamification — backend handoff','Cola-One','To Do','High','TDX','2026-10-25','2026-10-31','2']
+    ];
+    const esc = value => value.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const tasks = [...(window.septemberTasks || []), ...octoberTasks];
+    const rows = document.getElementById('taskRows'), count = document.getElementById('count'), clientList = document.getElementById('clientList');
+    const reportTotal = 132;
+    const monthLabel = month => month === '2026-09' ? 'September 2026' : 'October 2026';
+    const clientCounts = tasks.reduce((acc,t) => { const name = t[2]; if (name && name !== 'Unassigned') acc[name] = (acc[name] || 0) + 1; return acc; }, {});
+    clientList.innerHTML = Object.entries(clientCounts).sort((a,b)=>b[1]-a[1]).slice(0,8).map(([name,total]) => `<div class="client"><span class="client-name">${esc(name)}</span><b>${total}</b></div>`).join('');
+    function render(){ const q=document.getElementById('search').value.toLowerCase(), m=document.getElementById('month').value, s=document.getElementById('status').value, p=document.getElementById('priority').value, l=document.getElementById('list').value; const filtered=tasks.filter(t => (!q || t.join(' ').toLowerCase().includes(q)) && (m==='All Months'||monthLabel(t[6].slice(0,7))===m) && (s==='All Statuses'||t[3]===s) && (p==='All Priorities'||t[4]===p) && (l==='All Lists'||t[5]===l)); rows.innerHTML=filtered.map(t=>`<tr>${t.map((v,i)=>`<td class="${i===3?'status '+(v==='Closed'?'closed':'todo'):i===4?'priority '+v.toLowerCase().replace(' ','-'):''}">${esc(String(v))}</td>`).join('')}</tr>`).join(''); count.textContent=`${filtered.length} listed / ${reportTotal} total tasks`; }
+    ['search','month','status','priority','list'].forEach(id => document.getElementById(id).addEventListener(id==='search'?'input':'change', render)); render();
+  </script>
+</body>
+</html>
